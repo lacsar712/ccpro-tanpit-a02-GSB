@@ -39,3 +39,26 @@ class LiquorSample(models.Model):
     taken_at = models.DateTimeField(auto_now_add=True)
     ph = models.FloatField()
     operator = models.CharField(max_length=64, blank=True)
+
+
+class DrumCard(models.Model):
+    """转速卡：坑内转鼓每分钟转数的测定凭证，注液改鞣制中的门槛。"""
+
+    pit = models.ForeignKey(Pit, on_delete=models.CASCADE, related_name="drum_cards")
+    card_no = models.PositiveIntegerField()
+    rpm = models.PositiveIntegerField()
+    measurer = models.CharField(max_length=64)
+    measured_at = models.DateTimeField(auto_now_add=True)
+    voided_at = models.DateTimeField(null=True, blank=True)
+    voided_by = models.CharField(max_length=64, blank=True)
+
+    class Meta:
+        ordering = ["pit_id", "card_no"]
+        constraints = [
+            # 同坑正在用（未作废）的卡号不得撞号；作废后卡号可再用
+            models.UniqueConstraint(
+                fields=["pit", "card_no"],
+                condition=models.Q(voided_at__isnull=True),
+                name="uniq_active_drum_card_no",
+            )
+        ]
