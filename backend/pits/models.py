@@ -39,3 +39,24 @@ class LiquorSample(models.Model):
     taken_at = models.DateTimeField(auto_now_add=True)
     ph = models.FloatField()
     operator = models.CharField(max_length=64, blank=True)
+
+
+class DrumCard(models.Model):
+    """转速卡：每坑一列卡号（从 1 起），同坑在用卡号唯一。"""
+
+    pit = models.ForeignKey(Pit, on_delete=models.CASCADE, related_name="drum_cards")
+    card_no = models.PositiveIntegerField()
+    rpm = models.PositiveIntegerField()
+    measurer = models.CharField(max_length=64)
+    measured_at = models.DateTimeField(auto_now_add=True)
+    voided_by = models.CharField(max_length=64, blank=True, default="")
+    voided_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("pit", "card_no"),
+                condition=models.Q(voided_at__isnull=True),
+                name="uniq_active_card_no_per_pit",
+            )
+        ]

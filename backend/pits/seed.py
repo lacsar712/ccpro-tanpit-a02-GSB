@@ -18,7 +18,7 @@ def seed_demo() -> None:
         ("东-2", Pit.STATUS_FILL, 0, 1, None),
         ("中-1", Pit.STATUS_DRAINED, 1, 0, 4.6),
         ("中-2", Pit.STATUS_TANNING, 1, 1, 6.1),
-        ("西-1", Pit.STATUS_FILL, 2, 0, None),
+        ("西-1", Pit.STATUS_DRAINED, 2, 0, 4.1),
         ("西-2", Pit.STATUS_DRAINED, 2, 1, 3.8),
     ]
     for code, status, row, col, ph in layout:
